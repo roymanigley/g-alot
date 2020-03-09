@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+    http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+    <application>
+        <locale-config>
+            <default-locale>en</default-locale>
+            <supported-locale>en</supported-locale>
+            <supported-locale>fr</supported-locale>
+        </locale-config>
+        <resource-bundle>
+            <!-- files: src/main/resources/ch/bytecrowd/i18n/message_de.properties or message_fr.properties -->
+            <base-name>ch.bytecrowd.i18n.messages</base-name>
+            <var>i18n</var>
+            <!-- 
+               public void changeLanguage(String language) {
+                    locale = new Locale(language);
+                    FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(language));
+                }
+             -->
+        </resource-bundle>
+
+        <!--
+
+        #{i18n['funny.slogan']}
+
+        if you want to use Spring managed beans in the JSF context.
+        
+        <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+        
+        -->
+    </application>
+</faces-config>

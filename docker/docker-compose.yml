@@ -1,0 +1,46 @@
+version: '2'
+services:
+  java:
+    image: bitnami/java:1.8 # 11, 13
+    command: "java -jar package.jar"
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+      
+  postgresql:
+    image: 'postgres:12.1'
+    environment:
+      - POSTGRES_USER=exchange
+      - POSTGRES_PASSWORD=
+  mysql:
+    image: 'mysql:8.0.19'
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=address
+    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+  
+  # use from other docker file
+  jhipster-elasticsearch:
+    extends:
+      file: jhipster-console.yml
+      service: jhipster-elasticsearch
+
+  # build from docker file (proxy is the dir)
+  proxy:
+    build: "proxy"
+    networks:
+      - vpcbr
+    ports:
+      - 8080:8080
+    depends_on:
+      - tomcat
+      
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.9.0.0/16
+         gateway: 10.9.0.1

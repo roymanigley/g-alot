@@ -1,3 +1,5 @@
+package g-alot{basePackage}.model;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,6 +19,28 @@ public class g-alot{Entity} implements Serializable {
      
     @Column
     private LocalDateTime dateTime;
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        g-alot{Entity} g-alot{entity} = (g-alot{Entity}) o;
+        return Objects.equals(id, g-alot{entity}.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     /*
 

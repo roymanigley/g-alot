@@ -61,8 +61,9 @@ if (cacheFile.exists())
 
 if (commandMap.isEmpty() || cliArgs.i) {
 
-    println "[+] Indexing templates in: ${gAlot_Home}"
-    File fileDir = new File(gAlot_Home)
+    commandMap = new TreeMap()
+    println "[+] Indexing templates in: ${gAlot_Home}/templates"
+    File fileDir = new File(gAlot_Home + "/templates")
     fileDir.eachDirRecurse() { dir ->  
         dir.eachFile { file ->
             if (!file.isDirectory() && !file.parentFile.name.equals("hide") && !(file.toString() =~ /.info$/)) {
@@ -98,7 +99,7 @@ if (commandMap.isEmpty() || cliArgs.i) {
                 listPlaceHolders(templateContent, cliArgs)
             } else {
                 def templateStr = replacePlaceHolders(templateContent, cliArgs)
-                println "[+] ${templateStr}"
+                println templateStr
                 if (cliArgs.c) {
                     def ss = new java.awt.datatransfer.StringSelection(templateStr)
                     java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
@@ -137,24 +138,37 @@ if (cliArgs.v)
     println "[+] Done"
 
 def String linkingTemplates(def templateContent, def cliArgs, def commandMap) {
-    def matcher = (templateContent =~ /g-alot:link\{([a-zA-Z\-.0-9]+)\}/)
+    def regexForLink = /g-alot:link\{([a-zA-Z\-.0-9\/:]+)\}/
+    def matcher = (templateContent =~ regexForLink)
     def counter = 0
     if (cliArgs?.v)
         println "[+] collecting linked templates ..."
     while (matcher.find()) {
         def key = matcher.group(1)
-        if (commandMap[key]?.path) {
-            def newValue = new File(commandMap[key].path).text //commandMap[key].call()
+        def newValue = null
+
+        if (key =~ /^http(s)?:/) {
+            if (cliArgs?.v)
+                println "[+] linking URL: ${key}"
+            newValue = key.toURL().text
+
+        } else if (commandMap[key]?.path) {
+            newValue = new File(commandMap[key].path).text
+            if (cliArgs?.v)
+                println "[+] linked template:\n\tKey : ${key}\n\tFile: ${commandMap[key].path}"
+        }
+
+        if (newValue) {
             def toReplace = "g-alot:link\\{${key}\\}"
             templateContent = templateContent.replaceAll(toReplace, newValue)
             counter++
 
-            if (cliArgs?.v)
-                println "[+] linked template:\n\tKey : ${key}\n\tFile: ${commandMap[key].path}"
+            if (templateContent =~ regexForLink) 
+                templateContent = linkingTemplates(templateContent, cliArgs, commandMap)
         } else {
             if (cliArgs?.v)
-                println "[!] template not linked:\n\tKey : ${key}\n\tFile: ${commandMap[key]?.path}"
-            throw new IllegalArgumentException("Could not link template: ${key} to path: ${commandMap[key]?.path}");
+                println "[!] template not linked:\n\tKey : ${key}\n\tFile: ${commandMap[key]}"
+            throw new IllegalArgumentException("Could not link template: ${key} to path: ${commandMap[key]}");
         }
     }
     if (cliArgs?.v)
@@ -181,7 +195,7 @@ def void listPlaceHolders(def templateContent, cliArgs) {
     if (placeHolders.isEmpty()) {
         println "[+] No placeholders found, may use -v to get more informations"
     } else {
-        println "galot -t ${cliArgs.t} -r " + placeHolders.join(":VALUE,") + ":VALUE"
+        println "g-alot -t ${cliArgs.t} -r " + placeHolders.join(":VALUE,") + ":VALUE"
     }
 }
 
@@ -195,7 +209,7 @@ def String replacePlaceHolders(def templateContent, def cliArgs) {
             def toReplace = "g-alot\\{${key}\\}"
 
             if (cliArgs?.v)
-                println "[+] will replace: ${toReplace} => ${newValue}"
+                println "[+] replaceing: ${toReplace} => ${newValue}"
             if (newValue.startsWith("<")) {
                 newValue = new File(newValue.replaceFirst("<", "")).text
                 println "[+] Value to replace from file:\n${newValue}"

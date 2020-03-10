@@ -1,3 +1,11 @@
+package g-alot{basePackage}.service.impl;
+
+import g-alot{basePackage}.model.g-alot{Entity};
+import g-alot{basePackage}.service.g-alot{Entity}Service;
+import g-alot{basePackage}.repository.g-alot{Entity}Repository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +28,10 @@ public class g-alot{Entity}ServiceImpl implements g-alot{Entity}Service {
     @Override
     public List<g-alot{Entity}> findAll() {
         return repository.findAll();
+    }
+    
+    public List<g-alot{Entity}> findAll(int pageIndex, int size) {
+        return repository.findAll(PageRequest.of(pageIndex, size)).getContent();
     }
 
     @Override

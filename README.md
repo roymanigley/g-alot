@@ -21,16 +21,17 @@
   - [Example (file)](#example-file)
 
 
-![g-alot.png](hide/g-alot.png)
+![g-alot.png](img/g-alot.png)
 
 ## Open Points
 - ~~recursive find templates~~
 - ~~display placeholders in template `g-alot{placeholder}`~~
 - ~~replace placeholders in template `g-alot{placeholder}`~~
 - ~~include other templates in template `g-alot:link{template}`~~
-- include other templates in template `g-alot:link{template}` **recursive**
+- ~~include other templates in template `g-alot:link{template}` **recursive**~~
 - ~~load templates from cache `g-alot:link{template}`~~
 - ~~search in templates `-f=` → toLowerCase contains~~
+- ~~copy to clipboard `-c`~~
 - ~~replace from file  
 `galot -t test-main.groovy -r "content:</etc/passwd,age:88"`~~
 - code clean up
@@ -43,18 +44,18 @@
 - Download the script  
 `git clone ...`
 - set alias in `~/.zshrc` ot `~/.bashrc`  
-`alias galot="groovy repos/g-alot/GAlot.groovy --home /path/to/g-alot"`
+`alias g-alot="groovy repos/g-alot/GAlot.groovy --home /path/to/g-alot"`
 - test  
-`galot`
+`g-alot`
 
 ## Add new Template
 > Just add a file in one of th subfolder in the `g-alot` directory, you can even create new directories.  
-Those templates will be listed when calling `galot -l`  
+Those templates will be listed when calling `g-alot -l`  
 The template name is a concatination of the filename and its parent directory name  
 >  
 > **Important**:  
 > after adding a new template you have to reindex the templates:  
-> `galot -i` or `galot -i -v` for verbose output
+> `g-alot -i` or `g-alot -i -v` for verbose output
 
 ## Link templates template `g-alot:link{template}`
 
@@ -77,7 +78,7 @@ g-alot:link{jpa-Entity.java}
 println "Hello g-alot{name} you are g-alot{age} years old"
 ```
 - Command  
-`galot -t test-main.groovy -r name:lala,age:88`
+`g-alot -t test-main.groovy -r name:lala,age:88`
 - Output  
 ```
 println "Hello lala you are 88 years old"
@@ -90,7 +91,7 @@ g-alot{content}
 """
 ```
 - Command  
-`galot -t test-main.groovy -r "content:</etc/passwd"`
+`g-alot -t test-main.groovy -r "content:</etc/passwd"`
 - Output  
 ```
 println """
